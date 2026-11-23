@@ -102,13 +102,13 @@ up() {
 
   cat <<EOF
 
-Ready. Next, publish the image and deploy it as a participant:
+Ready. Deploy the app as a participant, like on the event day
+(namespaces: ${NAMESPACES[*]}):
 
-  docker build -t localhost:${REG_PORT}/workshop-frontend:dev .
-  docker push localhost:${REG_PORT}/workshop-frontend:dev
-  helm install frontend dev/chart -n participant-1 --set path=anni
+  cp my-values.example.yaml my-values.yaml
+  helm install frontend dev/chart -n participant-1 -f my-values.yaml
 
-Then open http://localhost/anni/ (user demo / demo).
+Then open http://localhost/annie/ (user demo / demo).
 EOF
 }
 

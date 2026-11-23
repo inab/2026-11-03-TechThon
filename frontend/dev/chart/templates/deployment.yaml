@@ -13,6 +13,9 @@ spec:
     metadata:
       labels:
         {{- include "frontend.labels" . | nindent 8 }}
+      annotations:
+        # Restarts the pod when the Keycloak client secret in the values changes.
+        checksum/keycloak-secret: {{ .Values.keycloak.clientSecret | default "" | sha256sum | trunc 12 | quote }}
     spec:
       securityContext:
         runAsNonRoot: true
@@ -35,7 +38,7 @@ spec:
             - name: NUXT_OAUTH_KEYCLOAK_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.keycloak.clientSecretName }}
+                  name: {{ if .Values.keycloak.clientSecret }}{{ .Release.Name }}-keycloak{{ else }}{{ .Values.keycloak.clientSecretName }}{{ end }}
                   key: client-secret
             - name: NUXT_APP_SECRET
               valueFrom:

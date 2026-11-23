@@ -3,7 +3,7 @@
  * (NUXT_APP_BASE_URL). Every participant runs the same image, so this is the
  * only thing that tells the apps apart.
  *
- *   base "/anni/" -> { path: "anni", base: "/anni/" }
+ *   base "/annie/" -> { path: "annie", base: "/annie/" }
  *   base "/"      -> { path: null, ... }   (local development)
  */
 export function useParticipant() {

@@ -4,7 +4,7 @@ For whoever runs the shared Keycloak server. It covers what the workshop fronten
 
 ## What the app needs
 
-Every participant deploys the same frontend to `https://<host>/<their path>/` (for example `https://workshop.example.com/anni/`). All of them log in through **one realm and one client**:
+Every participant deploys the same frontend to `https://<host>/<their path>/` (for example `https://workshop.example.com/annie/`). All of them log in through **one realm and one client**:
 
 - a realm (here `workshop`)
 - a **confidential** OpenID Connect client (here `nuxt-workshop`) using the standard login flow (authorization code)
@@ -45,7 +45,7 @@ The quickest way is to import the file from this repository, then adjust it.
 
    Leave **Home URL** empty: Keycloak shows it as a "Back to application" link on some of its pages, and no single address fits, since every participant has their own path.
 
-   Keycloak accepts a `*` only at the end of a URI, which is exactly what's needed here: `https://<host>/*` covers `/anni/auth/keycloak`, `/perez/auth/keycloak` and any other path.
+   Keycloak accepts a `*` only at the end of a URI, which is exactly what's needed here: `https://<host>/*` covers `/annie/auth/keycloak`, `/perez/auth/keycloak` and any other path.
 
 4. **Require HTTPS.** **Realm settings → General → Require SSL**: set it to **External requests** (or **All requests**). The file sets **None**, which is only for local HTTP.
 

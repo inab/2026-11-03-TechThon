@@ -1,24 +1,30 @@
-# --- Set by the participant ---------------------------------------------------
+# Participants set these in their values file (my-values.example.yaml); the
+# defaults here are for the local kind cluster.
+
 # The app runs at <scheme>://<host>/<path>/. Lowercase letters, numbers and
-# dashes. Change it any time with: helm upgrade ... --reuse-values --set path=new
+# dashes. To change it: edit the values file, then helm upgrade ... -f <file>
 path: ""
 
-# --- Shared by all participants (defaults are for the local kind cluster) ----
 host: localhost
 scheme: http
 ingressClassName: traefik
 
+# The published image. To try local code instead, push it to the local
+# registry and use repository localhost:5001/workshop-frontend, tag dev.
 image:
-  repository: localhost:5001/workshop-frontend
-  tag: dev
+  repository: ghcr.io/inab/2026-11-03-techthon-frontend
+  tag: main
   pullPolicy: Always
 
 keycloak:
   serverUrl: http://keycloak.localhost:8080
   realm: workshop
   clientId: nuxt-workshop
-  # Secret in the release's namespace with the key "client-secret".
-  # Created by the coordinator (locally: dev/kind/cluster.sh).
+  # The client secret, usually given in the participant's values file. The
+  # chart then stores it in a Secret of its own.
+  clientSecret: ""
+  # Used only when clientSecret is empty: an existing Secret in the namespace
+  # with the key "client-secret" (locally created by dev/kind/cluster.sh).
   clientSecretName: workshop-keycloak
 
 resources:

@@ -9,3 +9,6 @@ dist
 .env.*
 *.log
 .DS_Store
+
+# Participants' Helm values (contain the Keycloak client secret)
+my-values.yaml
