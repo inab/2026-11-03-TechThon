@@ -3,7 +3,7 @@ const route = useRoute()
 const { loggedIn, user } = useUserSession()
 const participant = useParticipant()
 
-// "anni" -> "Anni", "anni-perez" -> "Anni Perez"; "frontend" when running at "/"
+// "annie" -> "Annie", "annie-perez" -> "Annie Perez"; "frontend" when running at "/"
 const name = computed(() =>
   participant.path
     ? participant.path.split('-').filter(Boolean)

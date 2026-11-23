@@ -29,7 +29,7 @@ pnpm install
 pnpm dev
 ```
 
-Open **http://localhost:3000/anni/** and log in with **demo / demo**. The app runs under the path `/anni/`, like on the event day (see the "Event day" section in `.env`). On logout, Keycloak asks "Do you want to log out?": click **Logout**.
+Open **http://localhost:3000/annie/** and log in with **demo / demo**. The app runs under the path `/annie/`, like on the event day (see the "Event day" section in `.env`). On logout, Keycloak asks "Do you want to log out?": click **Logout**.
 
 Good to know:
 - **Use `localhost`, not `127.0.0.1`.** The Keycloak client only accepts `localhost` URLs. `pnpm dev` listens on IPv4 and IPv6, so `localhost` works whichever one your browser picks. This also makes it reachable from your local network.
@@ -70,11 +70,11 @@ docker push localhost:5001/workshop-frontend:dev
 **4. Deploy as a participant**, like in [EVENT_DAY.md](EVENT_DAY.md). Kubernetes pulls the image from the registry:
 
 ```bash
-helm install frontend dev/chart -n participant-1 --set path=anni
+helm install frontend dev/chart -n participant-1 --set path=annie
 kubectl get pods -n participant-1        # wait for READY 1/1
 ```
 
-Open **http://localhost/anni/** and log in with `demo` / `demo`.
+Open **http://localhost/annie/** and log in with `demo` / `demo`.
 
 **5. Try the rest:**
 
@@ -82,7 +82,7 @@ Open **http://localhost/anni/** and log in with `demo` / `demo`.
 # A second participant
 helm install frontend dev/chart -n participant-2 --set path=bob
 
-# Change the path: http://localhost/perez/ works, /anni/ returns 404
+# Change the path: http://localhost/perez/ works, /annie/ returns 404
 helm upgrade frontend dev/chart -n participant-1 --reuse-values --set path=perez
 
 # A path someone else has is refused
@@ -113,16 +113,16 @@ Everything environment-specific is an environment variable; nothing is baked int
 | `NUXT_APP_SECRET` | Signs the session cookie. At least 32 characters: `openssl rand -base64 32` | (you generate it) |
 | `NUXT_PUBLIC_APP_URL` | The app's public URL, **including** the path | `http://localhost:3000` |
 | `NUXT_OAUTH_KEYCLOAK_REDIRECT_URL` | `NUXT_PUBLIC_APP_URL` + `auth/keycloak` | `http://localhost:3000/auth/keycloak` |
-| `NUXT_APP_BASE_URL` | Path the app runs under, e.g. `/anni/` | `/` |
+| `NUXT_APP_BASE_URL` | Path the app runs under, e.g. `/annie/` | `/` |
 | `NUXT_SESSION_COOKIE_PATH` | Must equal `NUXT_APP_BASE_URL` | `/` |
 
-The last four must agree with each other. For path `anni` on `https://workshop.example.com` they are:
+The last four must agree with each other. For path `annie` on `https://workshop.example.com` they are:
 
 ```dotenv
-NUXT_APP_BASE_URL=/anni/
-NUXT_SESSION_COOKIE_PATH=/anni/
-NUXT_PUBLIC_APP_URL=https://workshop.example.com/anni/
-NUXT_OAUTH_KEYCLOAK_REDIRECT_URL=https://workshop.example.com/anni/auth/keycloak
+NUXT_APP_BASE_URL=/annie/
+NUXT_SESSION_COOKIE_PATH=/annie/
+NUXT_PUBLIC_APP_URL=https://workshop.example.com/annie/
+NUXT_OAUTH_KEYCLOAK_REDIRECT_URL=https://workshop.example.com/annie/auth/keycloak
 ```
 
 ## Troubleshooting

@@ -25,12 +25,12 @@ kubectl get pods -n <your namespace>
 
 ## 1. Choose your path
 
-Your path is the last part of your app's address. Use lowercase letters, numbers and dashes only, for example `anni` or `perez`. It must be unique among all participants. You can change it later.
+Your path is the last part of your app's address. Use lowercase letters, numbers and dashes only, for example `annie` or `perez`. It must be unique among all participants. You can change it later.
 
 ## 2. Deploy
 
 ```bash
-helm install frontend <chart> -n <your namespace> --set path=anni
+helm install frontend <chart> -n <your namespace> --set path=annie
 ```
 
 `frontend` is the name of your release. Keep it: you need it to change or remove the deployment.
@@ -45,7 +45,7 @@ The `READY` column shows `1/1` when it's done.
 
 ## 3. Try it
 
-Open `https://<host>/anni/`, using your path:
+Open `https://<host>/annie/`, using your path:
 
 1. The landing page is public.
 2. Click **Log in** and sign in with your Keycloak user.
@@ -54,7 +54,7 @@ Open `https://<host>/anni/`, using your path:
 
 ## Change your path
 
-For example, from `anni` to `perez`:
+For example, from `annie` to `perez`:
 
 ```bash
 helm upgrade frontend <chart> -n <your namespace> --reuse-values --set path=perez

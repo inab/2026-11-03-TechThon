@@ -1,6 +1,6 @@
 # Workshop frontend demo
 
-A small Nuxt app that shows a login flow with Keycloak: public landing page → Keycloak login → protected page → logout. It ships as one Docker image, configured by environment variables. In the workshop, each participant deploys it to a shared Kubernetes cluster under their own path, e.g. `https://<host>/anni/`.
+A small Nuxt app that shows a login flow with Keycloak: public landing page → Keycloak login → protected page → logout. It ships as one Docker image, configured by environment variables. In the workshop, each participant deploys it to a shared Kubernetes cluster under their own path, e.g. `https://<host>/annie/`.
 
 | Setup | For |
 |---|---|

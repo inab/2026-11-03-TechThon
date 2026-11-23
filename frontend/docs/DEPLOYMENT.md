@@ -9,7 +9,7 @@ For whoever writes the Helm chart. It covers what the image expects, the setting
 - **One shared hostname, one path per participant.** The participant chooses the path and can change it later (see [Changing a participant's path](#changing-a-participants-path)).
 
 ```
-https://workshop.example.com/anni/   ─┐                ┌─► Service ─► Pod (NUXT_APP_BASE_URL=/anni/)
+https://workshop.example.com/annie/   ─┐                ┌─► Service ─► Pod (NUXT_APP_BASE_URL=/annie/)
 https://workshop.example.com/bob/    ─┼─► Ingress ─────┼─► Service ─► Pod (NUXT_APP_BASE_URL=/bob/)
 https://workshop.example.com/carol/  ─┘                └─► ...
 ```
@@ -43,14 +43,14 @@ The app runs the login flow itself (landing page → Keycloak login → protecte
 
 ### For each participant (all derived from one value: the path)
 
-For path `anni` on `https://workshop.example.com`:
+For path `annie` on `https://workshop.example.com`:
 
 | Variable | Value | Notes |
 |---|---|---|
-| `NUXT_APP_BASE_URL` | `/anni/` | Leading **and** trailing slash |
-| `NUXT_SESSION_COOKIE_PATH` | `/anni/` | Same value as `NUXT_APP_BASE_URL`. Keeps each participant's login cookie to their own path |
-| `NUXT_PUBLIC_APP_URL` | `https://workshop.example.com/anni/` | Hostname + base path |
-| `NUXT_OAUTH_KEYCLOAK_REDIRECT_URL` | `https://workshop.example.com/anni/auth/keycloak` | App URL + `auth/keycloak` |
+| `NUXT_APP_BASE_URL` | `/annie/` | Leading **and** trailing slash |
+| `NUXT_SESSION_COOKIE_PATH` | `/annie/` | Same value as `NUXT_APP_BASE_URL`. Keeps each participant's login cookie to their own path |
+| `NUXT_PUBLIC_APP_URL` | `https://workshop.example.com/annie/` | Hostname + base path |
+| `NUXT_OAUTH_KEYCLOAK_REDIRECT_URL` | `https://workshop.example.com/annie/auth/keycloak` | App URL + `auth/keycloak` |
 | `NUXT_APP_SECRET` | random, 32+ characters | **Secret.** Signs the session cookie. Generate it per release (e.g. Helm `randAlphaNum 48`). If it changes on upgrade, the participant just has to log in again |
 
 ### Checked at start-up
@@ -67,7 +67,7 @@ A pod in `CrashLoopBackOff` usually means one of these. `kubectl logs` shows whi
 
 ```
 Missing or invalid configuration:
-  - NUXT_SESSION_COOKIE_PATH must equal NUXT_APP_BASE_URL ("/anni/"), got "/"
+  - NUXT_SESSION_COOKIE_PATH must equal NUXT_APP_BASE_URL ("/annie/"), got "/"
 ```
 
 ## What the chart should offer participants
@@ -75,7 +75,7 @@ Missing or invalid configuration:
 Participants should only have to give **one value, the path**. The chart derives the four per-participant variables and the Ingress rule from it. The participant docs ([EVENT_DAY.md](EVENT_DAY.md)) assume these commands; if your chart uses other names, update that document.
 
 ```bash
-helm install <release> <chart> --set path=anni                     # deploy
+helm install <release> <chart> --set path=annie                     # deploy
 helm upgrade <release> <chart> --reuse-values --set path=perez     # change the path
 helm uninstall <release>                                           # remove
 ```
@@ -86,7 +86,7 @@ helm uninstall <release>                                           # remove
 
 ## Changing a participant's path
 
-The path is not fixed. It's only runtime configuration, so a participant can start as `anni` and switch to `perez`, as often as they like:
+The path is not fixed. It's only runtime configuration, so a participant can start as `annie` and switch to `perez`, as often as they like:
 
 ```bash
 helm upgrade <release> <chart> --reuse-values --set path=perez
@@ -94,8 +94,8 @@ helm upgrade <release> <chart> --reuse-values --set path=perez
 
 What happens:
 - The pod restarts with the new settings, and the Ingress rule moves to `/perez`. The image is not rebuilt or pulled again.
-- `https://<host>/anni/` stops working and `https://<host>/perez/` takes over.
-- The participant logs in again on the new path, because the old login cookie belonged to `/anni/`.
+- `https://<host>/annie/` stops working and `https://<host>/perez/` takes over.
+- The participant logs in again on the new path, because the old login cookie belonged to `/annie/`.
 - Keycloak needs no change: `https://<host>/*` covers every path.
 
 A participant who wants two paths at once installs a second release with a different path.
@@ -104,13 +104,13 @@ A participant who wants two paths at once installs a second release with a diffe
 
 - Route path prefix `/<path>` (`pathType: Prefix`) to the participant's Service, port 3000.
 - **Do not strip or rewrite the prefix.** The app expects `/<path>/...` in the request path. A rewrite such as `nginx.ingress.kubernetes.io/rewrite-target: /` breaks it.
-- `https://<host>/anni` (no trailing slash) also works.
+- `https://<host>/annie` (no trailing slash) also works.
 - Pass the original `Host` header and `X-Forwarded-Proto` (Traefik and ingress-nginx do both by default).
 - Terminate TLS at the Ingress. The app speaks plain HTTP inside the cluster.
 
 ## Health probes
 
-`GET /<path>/api/health` on port 3000, for example `/anni/api/health`. It returns `200 {"status":"ok"}`, needs no login and makes no external calls. Use it for both readiness and liveness. The image itself has no Docker healthcheck.
+`GET /<path>/api/health` on port 3000, for example `/annie/api/health`. It returns `200 {"status":"ok"}`, needs no login and makes no external calls. Use it for both readiness and liveness. The image itself has no Docker healthcheck.
 
 ## What the protected page shows
 
@@ -130,7 +130,7 @@ After login, the protected page shows how the request reached the app, layer by 
 
 ## Reference manifests for one participant
 
-A starting point for the chart templates, shown for path `anni`. Everything with `anni` in it comes from the path value; everything marked `<...>` is a shared value.
+A starting point for the chart templates, shown for path `annie`. Everything with `annie` in it comes from the path value; everything marked `<...>` is a shared value.
 
 ```yaml
 # Created by you in each participant namespace, before participants install
@@ -176,15 +176,15 @@ spec:
               valueFrom: { secretKeyRef: { name: workshop-keycloak, key: client-secret } }
             - name: NUXT_APP_SECRET
               valueFrom: { secretKeyRef: { name: frontend-<release>, key: app-secret } }
-            - { name: NUXT_APP_BASE_URL,                value: "/anni/" }
-            - { name: NUXT_SESSION_COOKIE_PATH,         value: "/anni/" }
-            - { name: NUXT_PUBLIC_APP_URL,              value: "https://<workshop.example.com>/anni/" }
-            - { name: NUXT_OAUTH_KEYCLOAK_REDIRECT_URL, value: "https://<workshop.example.com>/anni/auth/keycloak" }
+            - { name: NUXT_APP_BASE_URL,                value: "/annie/" }
+            - { name: NUXT_SESSION_COOKIE_PATH,         value: "/annie/" }
+            - { name: NUXT_PUBLIC_APP_URL,              value: "https://<workshop.example.com>/annie/" }
+            - { name: NUXT_OAUTH_KEYCLOAK_REDIRECT_URL, value: "https://<workshop.example.com>/annie/auth/keycloak" }
           readinessProbe:
-            httpGet: { path: /anni/api/health, port: 3000 }
+            httpGet: { path: /annie/api/health, port: 3000 }
             periodSeconds: 5
           livenessProbe:
-            httpGet: { path: /anni/api/health, port: 3000 }
+            httpGet: { path: /annie/api/health, port: 3000 }
             periodSeconds: 10
           resources:
             requests: { memory: 128Mi, cpu: 50m }
@@ -204,7 +204,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: frontend-<release>
-  # No rewrite-target annotation: the /anni prefix must reach the app.
+  # No rewrite-target annotation: the /annie prefix must reach the app.
 spec:
   ingressClassName: <nginx>
   tls:
@@ -214,7 +214,7 @@ spec:
     - host: <workshop.example.com>
       http:
         paths:
-          - path: /anni
+          - path: /annie
             pathType: Prefix
             backend:
               service:
@@ -237,13 +237,13 @@ Keycloak is set up separately, following [KEYCLOAK.md](KEYCLOAK.md). From it you
 
 ## Checking a deployment
 
-With two participants deployed (say paths `anni` and `bob`), in one browser window:
+With two participants deployed (say paths `annie` and `bob`), in one browser window:
 
-1. `https://<host>/anni/` loads the landing page; `https://<host>/anni/protected` sends you back to `/anni/`.
-2. **Log in** on `/anni/` goes to Keycloak and back to `/anni/protected`, showing the user's name and email.
-3. `https://<host>/bob/` still shows **Log in**: Anni's login does not leak to Bob's app.
+1. `https://<host>/annie/` loads the landing page; `https://<host>/annie/protected` sends you back to `/annie/`.
+2. **Log in** on `/annie/` goes to Keycloak and back to `/annie/protected`, showing the user's name and email.
+3. `https://<host>/bob/` still shows **Log in**: Annie's login does not leak to Bob's app.
 4. **Log in** on `/bob/` works **without a password prompt**. That's expected: the browser already has a Keycloak session.
-5. **Log out** on `/anni/`: Keycloak asks "Do you want to log out?", you click **Logout**, and you land back on `/anni/`. Bob's app keeps its own session.
-6. **Change the path:** run `helm upgrade <anni's release> <chart> --reuse-values --set path=perez`. `/perez/` now works and asks you to log in, and `/anni/` returns 404.
+5. **Log out** on `/annie/`: Keycloak asks "Do you want to log out?", you click **Logout**, and you land back on `/annie/`. Bob's app keeps its own session.
+6. **Change the path:** run `helm upgrade <annie's release> <chart> --reuse-values --set path=perez`. `/perez/` now works and asks you to log in, and `/annie/` returns 404.
 
-From a terminal: `curl https://<host>/anni/api/health` returns `{"status":"ok"}`, and `curl -i https://<host>/anni/api/stack` returns `401`.
+From a terminal: `curl https://<host>/annie/api/health` returns `{"status":"ok"}`, and `curl -i https://<host>/annie/api/stack` returns `401`.
