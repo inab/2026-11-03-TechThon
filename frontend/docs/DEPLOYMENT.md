@@ -14,7 +14,8 @@ For whoever writes the chart that participants install. Keycloak has its own gui
 
 - **`ingressClassName`** in `values.yaml`, if your cluster doesn't use Traefik
 - **TLS** for the host in `templates/ingress.yaml`, if your cluster doesn't add it by itself
-- **`image.tag`** in `values.yaml`: a version tag such as `1.0.0` instead of `main`
+
+The image tag stays `main`: the workshop runs the latest published build.
 
 ## What participants run
 

@@ -159,4 +159,4 @@ GitHub Actions builds the image for `linux/amd64` and `linux/arm64` and publishe
 | A version tag, e.g. `git tag v1.0.0 && git push origin v1.0.0` | `1.0.0`, `1.0`, `latest` |
 | A pull request | Built to check it works; nothing is published |
 
-Use a version tag for the event, so the cluster runs a fixed image.
+The workshop uses `main`. Every merge that changes `frontend/` publishes a new `main`, which pods pick up when they restart, so don't merge app changes during the workshop.
