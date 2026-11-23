@@ -40,15 +40,15 @@ Good to know:
 
 ## Rehearse the event day on Kubernetes
 
-This runs the event-day flow on your machine: you publish the image to a registry, then install it with Helm on a Kubernetes cluster, as a participant would. Locally:
+This runs the participants' event-day steps ([EVENT_DAY.md](EVENT_DAY.md)) on your machine: you fill in a values file and install the published image with Helm on a Kubernetes cluster. Locally:
 
 | On the day | Here |
 |---|---|
 | Shared cluster, Ingress at `https://<host>/` | [kind](https://kind.sigs.k8s.io/) cluster `workshop`, Traefik at `http://localhost/` |
-| Image on `ghcr.io` | Registry container at `localhost:5001` |
 | Shared Keycloak | Your local Keycloak, as `http://keycloak.localhost:8080` (the same name works from the browser and from the pods) |
 | The coworker's chart | `dev/chart/`, a stand-in that follows [DEPLOYMENT.md](DEPLOYMENT.md) |
 | One namespace per participant | `participant-1` and `participant-2` |
+| Settings given out by the coordinator | Already filled in `my-values.example.yaml` |
 
 Needs Docker on Linux (native Docker Engine; Docker Desktop isn't tested), [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation), [kubectl](https://kubernetes.io/docs/tasks/tools/) and [Helm](https://helm.sh/docs/intro/install/), about 3 GB of free disk space, and port 80 free. Run everything from the `frontend` folder (`cd frontend`).
 
@@ -60,17 +60,16 @@ Needs Docker on Linux (native Docker Engine; Docker Desktop isn't tested), [kind
 bash dev/kind/cluster.sh up
 ```
 
-**3. Publish the image** to the local registry, as the CI will do to `ghcr.io`:
+**3. Create your values file.** The example already has the local values, so a copy is enough:
 
 ```bash
-docker build -t localhost:5001/workshop-frontend:dev .
-docker push localhost:5001/workshop-frontend:dev
+cp my-values.example.yaml my-values.yaml
 ```
 
-**4. Deploy as a participant**, like in [EVENT_DAY.md](EVENT_DAY.md). Kubernetes pulls the image from the registry:
+**4. Deploy as a participant.** Kubernetes pulls the image from GitHub:
 
 ```bash
-helm install frontend dev/chart -n participant-1 --set path=annie
+helm install frontend dev/chart -n participant-1 -f my-values.yaml
 kubectl get pods -n participant-1        # wait for READY 1/1
 ```
 
@@ -79,26 +78,38 @@ Open **http://localhost/annie/** and log in with `demo` / `demo`.
 **5. Try the rest:**
 
 ```bash
-# A second participant
-helm install frontend dev/chart -n participant-2 --set path=bob
+# Change the path: set "path: perez" in my-values.yaml, then
+helm upgrade frontend dev/chart -n participant-1 -f my-values.yaml
+# http://localhost/perez/ works, /annie/ returns 404
 
-# Change the path: http://localhost/perez/ works, /annie/ returns 404
-helm upgrade frontend dev/chart -n participant-1 --reuse-values --set path=perez
+# A second participant (--set overrides the file)
+helm install frontend dev/chart -n participant-2 -f my-values.yaml --set path=bob
 
 # A path someone else has is refused
-helm install other dev/chart -n participant-2 --set path=perez
+helm install other dev/chart -n participant-2 -f my-values.yaml --set path=bob
 
 # Remove a deployment
 helm uninstall frontend -n participant-2
 ```
-
-After changing the app, repeat step 3 and restart the pods to pull the new image: `kubectl rollout restart deployment frontend -n participant-1`.
 
 **Remove everything** (the local Keycloak keeps running):
 
 ```bash
 bash dev/kind/cluster.sh down
 ```
+
+### Test your local code on the cluster
+
+Before publishing a change, you can run your local code instead of the published image: build it, push it to the cluster's local registry, and point the release at it.
+
+```bash
+docker build -t localhost:5001/workshop-frontend:dev .
+docker push localhost:5001/workshop-frontend:dev
+helm upgrade frontend dev/chart -n participant-1 -f my-values.yaml \
+  --set image.repository=localhost:5001/workshop-frontend --set image.tag=dev
+```
+
+After further changes, build and push again, then restart the pod: `kubectl rollout restart deployment frontend -n participant-1`.
 
 ## Configuration
 
