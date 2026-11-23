@@ -22,9 +22,9 @@ The app was tested against Keycloak 26.4.
 
 ## 2. Create the realm and client
 
-The quickest way is to import the file from the repo, then adjust it.
+The quickest way is to import the file from this repository, then adjust it.
 
-1. Admin console → realm dropdown → **Create realm** → **Resource file**: pick `keycloak/realm-export.json` → **Create**.
+1. Admin console → realm dropdown → **Create realm** → **Resource file**: pick `frontend/keycloak/realm-export.json` → **Create**.
 
    This creates the realm `workshop`, the client `nuxt-workshop` and a test user `demo`. The file is set up for local development, so the next steps are required.
 
