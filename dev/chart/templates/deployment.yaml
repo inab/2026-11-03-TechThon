@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "frontend.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "frontend.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "frontend.labels" . | nindent 8 }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: frontend
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: NUXT_OAUTH_KEYCLOAK_SERVER_URL
+              value: {{ .Values.keycloak.serverUrl | quote }}
+            - name: NUXT_OAUTH_KEYCLOAK_REALM
+              value: {{ .Values.keycloak.realm | quote }}
+            - name: NUXT_OAUTH_KEYCLOAK_CLIENT_ID
+              value: {{ .Values.keycloak.clientId | quote }}
+            - name: NUXT_OAUTH_KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.keycloak.clientSecretName }}
+                  key: client-secret
+            - name: NUXT_APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-app
+                  key: app-secret
+            - name: NUXT_APP_BASE_URL
+              value: {{ include "frontend.basePath" . | quote }}
+            - name: NUXT_SESSION_COOKIE_PATH
+              value: {{ include "frontend.basePath" . | quote }}
+            - name: NUXT_PUBLIC_APP_URL
+              value: {{ include "frontend.appUrl" . | quote }}
+            - name: NUXT_OAUTH_KEYCLOAK_REDIRECT_URL
+              value: {{ printf "%sauth/keycloak" (include "frontend.appUrl" .) | quote }}
+            # Optional: which machine the pod runs on, shown on the protected page.
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          readinessProbe:
+            httpGet:
+              path: {{ include "frontend.basePath" . }}api/health
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: {{ include "frontend.basePath" . }}api/health
+              port: http
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
