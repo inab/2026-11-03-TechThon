@@ -1,0 +1,32 @@
+{{- $path := include "frontend.path" . -}}
+{{- /*
+  Refuse a path another release already uses on this host. Needs permission to
+  list Ingresses in all namespaces; without it, Helm stops with an error here.
+*/ -}}
+{{- range (lookup "networking.k8s.io/v1" "Ingress" "" "").items | default list }}
+{{- if and (eq (index .metadata.labels "workshop/path" | default "") $path)
+           (not (and (eq .metadata.namespace $.Release.Namespace) (eq .metadata.name $.Release.Name))) }}
+{{- fail (printf "path %q is already taken (namespace %s). Choose another one." $path .metadata.namespace) }}
+{{- end }}
+{{- end }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "frontend.labels" . | nindent 4 }}
+    workshop/path: {{ $path | quote }}
+  # No rewrite: the app expects the /<path> prefix in the request.
+spec:
+  ingressClassName: {{ .Values.ingressClassName }}
+  rules:
+    - host: {{ .Values.host | quote }}
+      http:
+        paths:
+          - path: /{{ $path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}
+                port:
+                  name: http
