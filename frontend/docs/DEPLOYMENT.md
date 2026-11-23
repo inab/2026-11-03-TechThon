@@ -233,7 +233,7 @@ Keycloak is set up separately, following [KEYCLOAK.md](KEYCLOAK.md). From it you
 
 ## A working example chart
 
-`dev/chart/` in the repo is a small chart that implements everything above: one `path` value, the four derived variables, a per-release session secret kept across upgrades, probes, an Ingress without rewrite, path validation, and a check that refuses a path another release already uses. It runs on a local kind cluster (`dev/kind/cluster.sh`, see [LOCAL.md](LOCAL.md#rehearse-the-event-day-on-kubernetes)), where the whole flow, including a path change with `helm upgrade`, was tested in a browser. Use it as a starting point or a reference; the defaults in its `values.yaml` are for the local cluster.
+`frontend/dev/chart/` in this repository is a small chart that implements everything above: one `path` value, the four derived variables, a per-release session secret kept across upgrades, probes, an Ingress without rewrite, path validation, and a check that refuses a path another release already uses. It runs on a local kind cluster (`frontend/dev/kind/cluster.sh`, see [LOCAL.md](LOCAL.md#rehearse-the-event-day-on-kubernetes)), where the whole flow, including a path change with `helm upgrade`, was tested in a browser. Use it as a starting point or a reference; the defaults in its `values.yaml` are for the local cluster.
 
 ## Checking a deployment
 
