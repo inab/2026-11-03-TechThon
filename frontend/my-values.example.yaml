@@ -1,0 +1,27 @@
+# Your settings for installing the frontend with Helm.
+#
+#   cp my-values.example.yaml my-values.yaml
+#   (edit my-values.yaml)
+#   helm install frontend <chart> -n <your namespace> -f my-values.yaml
+#
+# The values below are for the local rehearsal (docs/LOCAL.md). On the event
+# day, replace each one marked "from the coordinator" with the value you are
+# given. my-values.yaml holds a secret: don't share it or commit it.
+
+# Your path: the app runs at https://<host>/<path>/.
+# Lowercase letters, numbers and dashes; must be unique. Your choice.
+path: annie
+
+# The workshop address, without https:// (from the coordinator).
+host: localhost
+
+# "https" on the event day, "http" for the local rehearsal (from the coordinator).
+scheme: http
+
+keycloak:
+  # Keycloak's address (from the coordinator).
+  serverUrl: http://keycloak.localhost:8080
+  # Realm, client ID and client secret (from the coordinator).
+  realm: workshop
+  clientId: nuxt-workshop
+  clientSecret: dev-only-secret-do-not-use-elsewhere
