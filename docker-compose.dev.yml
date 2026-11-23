@@ -1,0 +1,21 @@
+# Local Keycloak for development and for the Kubernetes rehearsal (docs/LOCAL.md).
+#
+#   docker compose -f docker-compose.dev.yml up -d keycloak
+#
+# Local Keycloak:  http://localhost:8080   (admin console login: admin / admin)
+# Demo user:       demo / demo             (realm "workshop")
+name: workshop-dev
+
+services:
+  keycloak:
+    # Pinned on purpose. If you bump it, re-check the admin env var names
+    # (Keycloak 26 uses KC_BOOTSTRAP_ADMIN_*; older versions use KEYCLOAK_ADMIN*).
+    image: quay.io/keycloak/keycloak:26.4.0
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
