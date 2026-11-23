@@ -1,0 +1,15 @@
+# Local stand-in for the workshop cluster. Used by dev/kind/cluster.sh.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    # Traefik listens on port 80 of this node (hostPort); this maps it to
+    # port 80 on your machine, so the apps are at http://localhost/<path>/.
+    # Both IPv4 and IPv6, because browsers may resolve "localhost" to either.
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 80
+        listenAddress: "127.0.0.1"
+      - containerPort: 80
+        hostPort: 80
+        listenAddress: "::1"
