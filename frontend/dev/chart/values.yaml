@@ -1,9 +1,10 @@
-# --- Set by the participant ---------------------------------------------------
+# Participants set these in their values file (my-values.example.yaml); the
+# defaults here are for the local kind cluster.
+
 # The app runs at <scheme>://<host>/<path>/. Lowercase letters, numbers and
-# dashes. Change it any time with: helm upgrade ... --reuse-values --set path=new
+# dashes. To change it: edit the values file, then helm upgrade ... -f <file>
 path: ""
 
-# --- Shared by all participants (defaults are for the local kind cluster) ----
 host: localhost
 scheme: http
 ingressClassName: traefik
