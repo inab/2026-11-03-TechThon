@@ -1,0 +1,16 @@
+node_modules
+.nuxt
+.output
+.data
+.git
+.gitignore
+.env
+.env.*
+docker-compose*.yml
+Dockerfile
+.dockerignore
+docs
+keycloak
+scripts
+*.md
+dev
