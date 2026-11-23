@@ -8,9 +8,11 @@ host: localhost
 scheme: http
 ingressClassName: traefik
 
+# The published image. To try local code instead, push it to the local
+# registry and use repository localhost:5001/workshop-frontend, tag dev.
 image:
-  repository: localhost:5001/workshop-frontend
-  tag: dev
+  repository: ghcr.io/inab/2026-11-03-techthon-frontend
+  tag: main
   pullPolicy: Always
 
 keycloak:
