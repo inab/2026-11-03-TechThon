@@ -17,8 +17,11 @@ keycloak:
   serverUrl: http://keycloak.localhost:8080
   realm: workshop
   clientId: nuxt-workshop
-  # Secret in the release's namespace with the key "client-secret".
-  # Created by the coordinator (locally: dev/kind/cluster.sh).
+  # The client secret, usually given in the participant's values file. The
+  # chart then stores it in a Secret of its own.
+  clientSecret: ""
+  # Used only when clientSecret is empty: an existing Secret in the namespace
+  # with the key "client-secret" (locally created by dev/kind/cluster.sh).
   clientSecretName: workshop-keycloak
 
 resources:
