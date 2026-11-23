@@ -25,17 +25,26 @@ kubectl get pods -n <your namespace>
 
 ## 1. Create your values file
 
-Download the example and copy it:
+Create a file called `my-values.yaml` and copy this into it:
 
-```bash
-curl -O https://raw.githubusercontent.com/inab/2026-11-03-TechThon/main/frontend/my-values.example.yaml
-cp my-values.example.yaml my-values.yaml
+```yaml
+# Your path: your app runs at https://<host>/<path>/
+# Lowercase letters, numbers and dashes. Must be unique. Your choice.
+path: annie
+
+# From the coordinator:
+host: <workshop address, without https://>
+scheme: https
+keycloak:
+  serverUrl: <Keycloak address>
+  realm: <realm>
+  clientId: <client ID>
+  clientSecret: <client secret>
 ```
 
-Open `my-values.yaml` and fill it in:
-- **`path`:** your choice, the last part of your app's address. Lowercase letters, numbers and dashes only, for example `annie` or `perez`. It must be unique among all participants. You can change it later.
-- **`scheme`:** `https`.
-- **Every other value:** replace it with what the coordinator gives you.
+Then fill it in:
+- **`path`:** your choice, the last part of your app's address, for example `annie` or `perez`. You can change it later.
+- **Every `<...>` value:** replace it with what the coordinator gives you.
 
 The file contains the client secret: don't share it.
 
