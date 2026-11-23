@@ -1,0 +1,9 @@
+apiVersion: v2
+name: workshop-frontend
+description: >-
+  Local stand-in for the workshop Helm chart, for rehearsing on a kind cluster
+  (dev/kind/cluster.sh). The real chart is written by the cluster owner; this
+  one follows docs/DEPLOYMENT.md and can serve as a starting point.
+type: application
+version: 0.1.0
+appVersion: dev
