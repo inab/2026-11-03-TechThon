@@ -22,7 +22,7 @@ The app runs the login flow itself (landing page → Keycloak login → protecte
 
 | | |
 |---|---|
-| Image | `ghcr.io/<owner>/workshop-frontend:<tag>`, public, so no image pull secret is needed |
+| Image | `ghcr.io/inab/2026-11-03-techthon-frontend:<tag>`, public, so no image pull secret is needed. Use a version tag such as `1.0.0` (see the tags in [LOCAL.md](LOCAL.md#publishing-the-image)) |
 | Port | `3000` (HTTP) |
 | User | Non-root, uid `1000`, gid `1000` (`runAsNonRoot: true` works) |
 | Volumes | None. The app keeps no files and no state on disk |
@@ -165,7 +165,7 @@ spec:
         runAsGroup: 1000
       containers:
         - name: frontend
-          image: ghcr.io/<owner>/workshop-frontend:<tag>
+          image: ghcr.io/inab/2026-11-03-techthon-frontend:<tag>
           ports:
             - containerPort: 3000
           env:
