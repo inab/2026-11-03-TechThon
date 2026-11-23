@@ -102,19 +102,11 @@ up() {
 
   cat <<EOF
 
-Ready. Deploy the app as a participant (namespaces: ${NAMESPACES[*]}).
+Ready. Deploy the app as a participant, like on the event day
+(namespaces: ${NAMESPACES[*]}):
 
-Like on the event day, with the published image from GitHub:
-
-  helm install frontend dev/chart -n participant-1 --set path=annie \\
-    --set image.repository=ghcr.io/inab/2026-11-03-techthon-frontend \\
-    --set image.tag=main
-
-Or, to test your local code before publishing it:
-
-  docker build -t localhost:${REG_PORT}/workshop-frontend:dev .
-  docker push localhost:${REG_PORT}/workshop-frontend:dev
-  helm install frontend dev/chart -n participant-1 --set path=annie
+  cp my-values.example.yaml my-values.yaml
+  helm install frontend dev/chart -n participant-1 -f my-values.yaml
 
 Then open http://localhost/annie/ (user demo / demo).
 EOF
