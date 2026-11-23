@@ -6,7 +6,7 @@ Run the app on your own machine, and rehearse the event day on a local Kubernete
 
 Runs the source code directly with `pnpm dev`: no Docker image, no Kubernetes. Use it while working on the app; changes show up in the browser right away. For the Kubernetes rehearsal you only need step 1 (Keycloak).
 
-Needs Node 22, pnpm and Docker (Docker only for the local Keycloak). Run everything from the repo folder.
+Needs Node 22, pnpm and Docker (Docker only for the local Keycloak). Run everything from the `frontend` folder (`cd frontend`).
 
 **1. Start the local Keycloak** (realm `workshop`, user `demo` / `demo`) and wait until it's ready:
 
@@ -50,7 +50,7 @@ This runs the event-day flow on your machine: you publish the image to a registr
 | The coworker's chart | `dev/chart/`, a stand-in that follows [DEPLOYMENT.md](DEPLOYMENT.md) |
 | One namespace per participant | `participant-1` and `participant-2` |
 
-Needs Docker on Linux (native Docker Engine; Docker Desktop isn't tested), [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation), [kubectl](https://kubernetes.io/docs/tasks/tools/) and [Helm](https://helm.sh/docs/intro/install/), about 3 GB of free disk space, and port 80 free. Run everything from the repo folder.
+Needs Docker on Linux (native Docker Engine; Docker Desktop isn't tested), [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation), [kubectl](https://kubernetes.io/docs/tasks/tools/) and [Helm](https://helm.sh/docs/intro/install/), about 3 GB of free disk space, and port 80 free. Run everything from the `frontend` folder (`cd frontend`).
 
 **1. Start the local Keycloak** (step 1 of [Run the app from source](#run-the-app-from-source-development)), if it isn't running. You don't need `.env` or `pnpm dev` here.
 
