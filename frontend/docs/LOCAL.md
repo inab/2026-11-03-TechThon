@@ -140,4 +140,12 @@ NUXT_OAUTH_KEYCLOAK_REDIRECT_URL=https://workshop.example.com/anni/auth/keycloak
 
 ## Publishing the image
 
-The image is meant to be published publicly on GitHub's registry as `ghcr.io/<owner>/workshop-frontend:<tag>`, built for `linux/amd64` and `linux/arm64`. The build workflow isn't set up yet. Until it is, build the image from this repo with `docker build -t workshop-frontend:<tag> .`.
+GitHub Actions builds the image for `linux/amd64` and `linux/arm64` and publishes it as **`ghcr.io/inab/2026-11-03-techthon-frontend`** (workflow: `.github/workflows/frontend-image.yml` at the repository root).
+
+| When | Tags |
+|---|---|
+| A push to `main` that changes `frontend/` | `main`, `sha-<commit>` |
+| A version tag, e.g. `git tag v1.0.0 && git push origin v1.0.0` | `1.0.0`, `1.0`, `latest` |
+| A pull request | Built to check it works; nothing is published |
+
+Use a version tag for the event, so the cluster runs a fixed image.
