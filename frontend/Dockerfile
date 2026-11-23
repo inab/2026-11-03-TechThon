@@ -1,7 +1,10 @@
 # syntax=docker/dockerfile:1
 
 # ---- Build stage ------------------------------------------------------------
-FROM node:22-alpine AS build
+# Runs on the build machine's own platform, also when building for another one:
+# the output is plain JavaScript (no native modules), so it is the same for
+# amd64 and arm64, and the build doesn't have to run under emulation.
+FROM --platform=$BUILDPLATFORM node:22-alpine AS build
 WORKDIR /app
 RUN corepack enable
 
