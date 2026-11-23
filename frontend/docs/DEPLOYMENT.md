@@ -39,7 +39,7 @@ The app runs the login flow itself (landing page → Keycloak login → protecte
 | `NUXT_OAUTH_KEYCLOAK_SERVER_URL` | `https://keycloak.example.com` | Must be reachable from the pods **and** from participants' browsers, at the same URL |
 | `NUXT_OAUTH_KEYCLOAK_REALM` | `workshop` | |
 | `NUXT_OAUTH_KEYCLOAK_CLIENT_ID` | `nuxt-workshop` | |
-| `NUXT_OAUTH_KEYCLOAK_CLIENT_SECRET` | | **Secret.** A Kubernetes Secret created by you in **each participant namespace** (Secrets can't be shared across namespaces); participants never see its value |
+| `NUXT_OAUTH_KEYCLOAK_CLIENT_SECRET` | | **Secret.** Given out on the day and entered by each participant in their values file; the chart stores it in a Secret per release (see below) |
 
 ### For each participant (all derived from one value: the path)
 
@@ -72,24 +72,43 @@ Missing or invalid configuration:
 
 ## What the chart should offer participants
 
-Participants should only have to give **one value, the path**. The chart derives the four per-participant variables and the Ingress rule from it. The participant docs ([EVENT_DAY.md](EVENT_DAY.md)) assume these commands; if your chart uses other names, update that document.
+The Keycloak and host settings are only known on the event day, so **participants enter them at install time** in a values file. The repository has the example they start from, [`frontend/my-values.example.yaml`](../my-values.example.yaml):
 
-```bash
-helm install <release> <chart> --set path=annie                     # deploy
-helm upgrade <release> <chart> --reuse-values --set path=perez     # change the path
-helm uninstall <release>                                           # remove
+```yaml
+path: annie            # the participant's choice
+host: <given on the day>
+scheme: https
+keycloak:
+  serverUrl: <given on the day>
+  realm: <given on the day>
+  clientId: <given on the day>
+  clientSecret: <given on the day>
 ```
 
+The participant docs ([EVENT_DAY.md](EVENT_DAY.md)) assume these value names and commands; if your chart uses other names, update the example file and that document.
+
+```bash
+helm install <release> <chart> -f my-values.yaml      # deploy
+helm upgrade <release> <chart> -f my-values.yaml      # after editing the file, e.g. a new path
+helm uninstall <release>                              # remove
+```
+
+- **Derive everything from these values:** the four per-participant variables and the Ingress rule come from `path`, `host` and `scheme`.
+- **Store `keycloak.clientSecret` in a Secret** created by the chart, and restart the pod when it changes (a checksum annotation on the pod template).
 - **Keep the path separate from the release name**, so a participant can change the path without reinstalling.
 - **Validate the path** in the chart, e.g. `^[a-z0-9-]+$`, so it's safe in a URL and in resource names.
 - **Each path must be unique** on the host. Two releases with the same path would fight over the same Ingress rule.
+
+[`frontend/dev/chart/`](../dev/chart/) does all of this and can serve as the starting point.
 
 ## Changing a participant's path
 
 The path is not fixed. It's only runtime configuration, so a participant can start as `annie` and switch to `perez`, as often as they like:
 
+They change `path` in their values file and run:
+
 ```bash
-helm upgrade <release> <chart> --reuse-values --set path=perez
+helm upgrade <release> <chart> -f my-values.yaml
 ```
 
 What happens:
@@ -130,14 +149,9 @@ After login, the protected page shows how the request reached the app, layer by 
 
 ## Reference manifests for one participant
 
-A starting point for the chart templates, shown for path `annie`. Everything with `annie` in it comes from the path value; everything marked `<...>` is a shared value.
+A starting point for the chart templates, shown for path `annie`. Everything with `annie` in it comes from `path`; everything marked `<...>` comes from the other values in the participant's file.
 
 ```yaml
-# Created by you in each participant namespace, before participants install
-# (not part of the release):
-#   kubectl create secret generic workshop-keycloak \
-#     --from-literal=client-secret='<client secret>'
----
 apiVersion: v1
 kind: Secret
 metadata:
@@ -145,6 +159,7 @@ metadata:
 type: Opaque
 stringData:
   app-secret: "<random, 32+ characters>"   # e.g. {{ randAlphaNum 48 }}
+  client-secret: "<keycloak.clientSecret>"  # from the participant's values file
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -173,7 +188,7 @@ spec:
             - { name: NUXT_OAUTH_KEYCLOAK_REALM,      value: "<workshop>" }
             - { name: NUXT_OAUTH_KEYCLOAK_CLIENT_ID,  value: "<nuxt-workshop>" }
             - name: NUXT_OAUTH_KEYCLOAK_CLIENT_SECRET
-              valueFrom: { secretKeyRef: { name: workshop-keycloak, key: client-secret } }
+              valueFrom: { secretKeyRef: { name: frontend-<release>, key: client-secret } }
             - name: NUXT_APP_SECRET
               valueFrom: { secretKeyRef: { name: frontend-<release>, key: app-secret } }
             - { name: NUXT_APP_BASE_URL,                value: "/annie/" }
@@ -244,6 +259,6 @@ With two participants deployed (say paths `annie` and `bob`), in one browser win
 3. `https://<host>/bob/` still shows **Log in**: Annie's login does not leak to Bob's app.
 4. **Log in** on `/bob/` works **without a password prompt**. That's expected: the browser already has a Keycloak session.
 5. **Log out** on `/annie/`: Keycloak asks "Do you want to log out?", you click **Logout**, and you land back on `/annie/`. Bob's app keeps its own session.
-6. **Change the path:** run `helm upgrade <annie's release> <chart> --reuse-values --set path=perez`. `/perez/` now works and asks you to log in, and `/annie/` returns 404.
+6. **Change the path:** set `path: perez` in Annie's values file and run `helm upgrade <release> <chart> -f my-values.yaml`. `/perez/` now works and asks you to log in, and `/annie/` returns 404.
 
 From a terminal: `curl https://<host>/annie/api/health` returns `{"status":"ok"}`, and `curl -i https://<host>/annie/api/stack` returns `401`.
