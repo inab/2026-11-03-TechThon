@@ -1,0 +1,26 @@
+# --- Set by the participant ---------------------------------------------------
+# The app runs at <scheme>://<host>/<path>/. Lowercase letters, numbers and
+# dashes. Change it any time with: helm upgrade ... --reuse-values --set path=new
+path: ""
+
+# --- Shared by all participants (defaults are for the local kind cluster) ----
+host: localhost
+scheme: http
+ingressClassName: traefik
+
+image:
+  repository: localhost:5001/workshop-frontend
+  tag: dev
+  pullPolicy: Always
+
+keycloak:
+  serverUrl: http://keycloak.localhost:8080
+  realm: workshop
+  clientId: nuxt-workshop
+  # Secret in the release's namespace with the key "client-secret".
+  # Created by the coordinator (locally: dev/kind/cluster.sh).
+  clientSecretName: workshop-keycloak
+
+resources:
+  requests: { memory: 128Mi, cpu: 50m }
+  limits: { memory: 256Mi }
