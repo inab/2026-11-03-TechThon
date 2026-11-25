@@ -1,0 +1,6 @@
+Your app: {{ include "frontend.appUrl" . }}
+
+Wait until it's ready:   kubectl get pods -n {{ .Release.Namespace }}
+Change the path:         edit path in your values file, then
+                         helm upgrade {{ .Release.Name }} <chart> -n {{ .Release.Namespace }} -f my-values.yaml
+Remove it:               helm uninstall {{ .Release.Name }} -n {{ .Release.Namespace }}

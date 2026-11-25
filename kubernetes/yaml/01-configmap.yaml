@@ -1,0 +1,20 @@
+# Session 2: settings for your app.
+# Replace every "YOUR_USERNAME" in all files with your name (lowercase letters, numbers, dashes),
+# for example: sed -i 's/YOUR_USERNAME/annie/g' yaml/*.yaml
+# and the three REPLACE values with what the coordinator gives you.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: YOUR_USERNAME-web-config
+  labels:
+    app: YOUR_USERNAME-web
+data:
+  # Your app's path: it runs at https://techbiolab.dev.bsc.es/YOUR_USERNAME/
+  NUXT_APP_BASE_URL: /YOUR_USERNAME/
+  NUXT_SESSION_COOKIE_PATH: /YOUR_USERNAME/
+  NUXT_PUBLIC_APP_URL: https://techbiolab.dev.bsc.es/YOUR_USERNAME/
+  NUXT_OAUTH_KEYCLOAK_REDIRECT_URL: https://techbiolab.dev.bsc.es/YOUR_USERNAME/auth/keycloak
+  # Keycloak (from the coordinator)
+  NUXT_OAUTH_KEYCLOAK_SERVER_URL: REPLACE-keycloak-address
+  NUXT_OAUTH_KEYCLOAK_REALM: REPLACE-realm
+  NUXT_OAUTH_KEYCLOAK_CLIENT_ID: REPLACE-client-id

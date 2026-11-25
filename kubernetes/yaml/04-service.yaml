@@ -1,0 +1,17 @@
+# Session 2: one stable name and port in front of your pods.
+# Test it from your laptop:
+#   kubectl port-forward service/YOUR_USERNAME-web 8080:80
+#   open http://localhost:8080/YOUR_USERNAME/
+apiVersion: v1
+kind: Service
+metadata:
+  name: YOUR_USERNAME-web
+  labels:
+    app: YOUR_USERNAME-web
+spec:
+  selector:
+    app: YOUR_USERNAME-web                 # sends traffic to the pods with this label
+  ports:
+    - name: http
+      port: 80
+      targetPort: http             # the container's port 3000

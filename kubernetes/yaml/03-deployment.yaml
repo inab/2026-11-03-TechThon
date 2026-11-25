@@ -1,0 +1,60 @@
+# Session 2: runs your app. Kubernetes keeps "replicas" copies (pods) running.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: YOUR_USERNAME-web
+  labels:
+    app: YOUR_USERNAME-web
+spec:
+  replicas: 1                      # optional exercise: change to 2 and apply again
+  selector:
+    matchLabels:
+      app: YOUR_USERNAME-web               # which pods belong to this Deployment
+  template:
+    metadata:
+      labels:
+        app: YOUR_USERNAME-web
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: web
+          image: ghcr.io/inab/2026-11-03-techthon-frontend:sha-ed4195e
+          ports:
+            - name: http
+              containerPort: 3000
+          envFrom:                 # every key of the ConfigMap and Secret becomes a variable
+            - configMapRef:
+                name: YOUR_USERNAME-web-config
+            - secretRef:
+                name: YOUR_USERNAME-web-secret
+          env:                     # optional: shown on the protected page
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          readinessProbe:          # traffic only goes to the pod once this answers
+            httpGet:
+              path: /YOUR_USERNAME/api/health
+              port: http
+            periodSeconds: 5
+          livenessProbe:           # the pod is restarted if this stops answering
+            httpGet:
+              path: /YOUR_USERNAME/api/health
+              port: http
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
+            limits: {cpu: 250m, memory: 256Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+            seccompProfile:
+              type: RuntimeDefault

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: workshop-frontend
+description: >-
+  The TechThon frontend on the Techbiolab Test Kubernetes Cluster (shared
+  namespace "techthon", host techbiolab.dev.bsc.es). Based on frontend/dev/chart
+  in github.com/inab/2026-11-03-TechThon (commit ed4195e).
+type: application
+version: 0.1.0
+appVersion: sha-ed4195e

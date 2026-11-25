@@ -1,0 +1,32 @@
+# Participants set these in their values file (../my-values.example.yaml).
+# Install with your own release name (the namespace is shared):
+#   helm install YOUR_USERNAME ./chart -f my-values.yaml
+
+# The app runs at <scheme>://<host>/<path>/. Lowercase letters, numbers and
+# dashes. To change it: edit the values file, then helm upgrade ... -f <file>
+path: ""
+
+host: techbiolab.dev.bsc.es
+scheme: https
+ingressClassName: nginx
+
+# The published image, fixed to one build (main at commit ed4195e).
+image:
+  repository: ghcr.io/inab/2026-11-03-techthon-frontend
+  tag: sha-ed4195e
+  pullPolicy: IfNotPresent
+
+keycloak:
+  serverUrl: ""
+  realm: ""
+  clientId: ""
+  # The client secret, usually given in the participant's values file. The
+  # chart then stores it in a Secret of its own.
+  clientSecret: ""
+  # Used only when clientSecret is empty: an existing Secret in the namespace
+  # with the key "client-secret".
+  clientSecretName: workshop-keycloak
+
+resources:
+  requests: { memory: 128Mi, cpu: 50m }
+  limits: { cpu: 250m, memory: 256Mi }

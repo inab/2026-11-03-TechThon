@@ -1,0 +1,21 @@
+# Session 2: publishes your app at https://techbiolab.dev.bsc.es/YOUR_USERNAME/
+# HTTPS is handled before the cluster (the bastion VM), so there is no "tls" section.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: YOUR_USERNAME-web
+  labels:
+    app: YOUR_USERNAME-web
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: techbiolab.dev.bsc.es
+      http:
+        paths:
+          - path: /YOUR_USERNAME        # no rewrite: the app expects /YOUR_USERNAME in the request
+            pathType: Prefix
+            backend:
+              service:
+                name: YOUR_USERNAME-web
+                port:
+                  name: http

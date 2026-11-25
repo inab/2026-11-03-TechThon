@@ -1,0 +1,28 @@
+{{- $path := include "frontend.path" . -}}
+{{- /*
+  The original chart refused a path another release already uses, by listing
+  Ingresses in all namespaces. Participants may only read their own namespace,
+  so that check is removed here: the cluster's ingress controller still refuses
+  an exact duplicate host and path.
+*/ -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "frontend.labels" . | nindent 4 }}
+    workshop/path: {{ $path | quote }}
+  # No rewrite: the app expects the /<path> prefix in the request.
+spec:
+  ingressClassName: {{ .Values.ingressClassName }}
+  rules:
+    - host: {{ .Values.host | quote }}
+      http:
+        paths:
+          - path: /{{ $path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}
+                port:
+                  name: http

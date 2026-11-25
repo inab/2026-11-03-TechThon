@@ -1,0 +1,17 @@
+# Your settings for installing the frontend with Helm (session 3).
+#
+#   cp my-values.example.yaml my-values.yaml      (then edit my-values.yaml)
+#   helm install YOUR_USERNAME ./chart -f my-values.yaml   (with your name, e.g. annie)
+#
+# my-values.yaml holds a secret: don't share it or commit it.
+
+# Your path: the app runs at https://techbiolab.dev.bsc.es/<path>/
+# Use <your name>, lowercase letters, numbers and dashes, e.g. annie.
+path: YOUR_USERNAME
+
+# Keycloak (from the coordinator).
+keycloak:
+  serverUrl: REPLACE-keycloak-address
+  realm: REPLACE-realm
+  clientId: REPLACE-client-id
+  clientSecret: REPLACE-client-secret
