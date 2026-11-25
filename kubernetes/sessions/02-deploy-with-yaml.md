@@ -5,7 +5,7 @@
 **Goal:** write and apply the basic Kubernetes objects yourself, test the app
 from your laptop, then publish it at `https://techbiolab.dev.bsc.es/YOUR_USERNAME/`.
 
-Run the commands from the `techthon/` folder, with `KUBECONFIG` set (session 1).
+Run the commands from the `kubernetes/` folder, with `KUBECONFIG` set (session 1).
 
 ## The app
 
