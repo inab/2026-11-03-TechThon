@@ -15,6 +15,6 @@ data:
   NUXT_PUBLIC_APP_URL: https://techbiolab.dev.bsc.es/YOUR_USERNAME/
   NUXT_OAUTH_KEYCLOAK_REDIRECT_URL: https://techbiolab.dev.bsc.es/YOUR_USERNAME/auth/keycloak
   # Keycloak (from the coordinator)
-  NUXT_OAUTH_KEYCLOAK_SERVER_URL: REPLACE-keycloak-address
-  NUXT_OAUTH_KEYCLOAK_REALM: REPLACE-realm
-  NUXT_OAUTH_KEYCLOAK_CLIENT_ID: REPLACE-client-id
+  NUXT_OAUTH_KEYCLOAK_SERVER_URL: https://inb.bsc.es/auth
+  NUXT_OAUTH_KEYCLOAK_REALM: techthon2026
+  NUXT_OAUTH_KEYCLOAK_CLIENT_ID: techthon
