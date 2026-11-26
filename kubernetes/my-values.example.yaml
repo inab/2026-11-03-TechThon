@@ -11,7 +11,7 @@ path: YOUR_USERNAME
 
 # Keycloak (from the coordinator).
 keycloak:
-  serverUrl: REPLACE-keycloak-address
-  realm: REPLACE-realm
-  clientId: REPLACE-client-id
+  serverUrl: https://inb.bsc.es/auth
+  realm: techthon2026
+  clientId: techthon
   clientSecret: REPLACE-client-secret
